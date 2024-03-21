@@ -1,2 +1,4 @@
-package iso.example.store.impl;public class StoreDevsStreamingMain {
+package iso.example.store.impl;
+
+public class StoreDevsStreamingMain {
 }

@@ -13,6 +13,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ */
 public class StoreModelImpl extends StoreModel {
     public StoreModelImpl(ModifiableStoreModelState initialState, String identifier, StoreModelProperties properties) {
         super(initialState, identifier, properties);
@@ -105,6 +108,9 @@ public class StoreModelImpl extends StoreModel {
 
     @Override
     protected LongSimTime timeAdvanceFunction(LongSimTime longSimTime) {
+        if (this.hasPendingOutput()) {
+            return longSimTime;
+        }
         return LongSimTime.builder()
                 .t((long)(modelState.getLastOrderTime() + properties.getOrderInterval()))
                 .build();
