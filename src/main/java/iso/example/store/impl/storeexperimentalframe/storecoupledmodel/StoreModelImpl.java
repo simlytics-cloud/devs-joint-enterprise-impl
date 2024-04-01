@@ -125,4 +125,8 @@ public class StoreModelImpl extends StoreModel {
                 .build();
     }
 
+    @Override
+    protected Bag outputFunction() {
+        return super.outputFunction();
+    }
 }
