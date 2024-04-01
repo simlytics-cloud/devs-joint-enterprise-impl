@@ -21,6 +21,10 @@ public class StoreModelImpl extends StoreModel {
         super(initialState, identifier, properties);
     }
 
+    /**
+     *
+     * @param customer
+     */
     @Override
     protected void processCustomer(Customer customer) {
         Customer finalCustomer = customer;
@@ -46,14 +50,14 @@ public class StoreModelImpl extends StoreModel {
             if (stock.getStockLevel() <= 0) {
                 requests.add(ProductRequest.builder()
                         .product(stock.getProduct())
-                        .quantity(10)
+                        .quantity(properties.getOrderQuantity())
                         .builtQuantity(0)
                         .build());
             }
         }
         return Order.builder()
                 .date(Instant.now().toString())
-                .storeName(modelIdentifier)
+                .storeName(properties.getStoreName())
                 .addAllProductRequest(requests)
                 .build();
     }
@@ -72,7 +76,10 @@ public class StoreModelImpl extends StoreModel {
 
     @Override
     protected void internalStateTransitionFunction(LongSimTime longSimTime) {
-        // The only internally generated action is an order every 24 hours
+        boolean hadOutput = hasPendingOutput();
+        if (hadOutput) {
+            clearPendingOutput();
+        }
         if (longSimTime.getT().intValue() - modelState.getLastOrderTime() == properties.getOrderInterval()) {
             Order order = ordering();
             if (!order.getProductRequest().isEmpty()) {
@@ -80,7 +87,9 @@ public class StoreModelImpl extends StoreModel {
             }
             modelState.setLastOrderTime(longSimTime.getT().intValue());
         } else {
-            throw new IllegalStateException("Store got internal state transition when not scheduled to order");
+            if (!hadOutput) {
+                throw new IllegalStateException("Store got internal state transition when not scheduled to order");
+            }
         }
     }
 
