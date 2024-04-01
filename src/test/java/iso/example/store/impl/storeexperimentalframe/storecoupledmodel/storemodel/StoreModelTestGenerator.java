@@ -7,15 +7,15 @@ import iso.example.store.immutables.Customer;
 import iso.example.store.immutables.Shipment;
 import iso.example.store.impl.storeexperimentalframe.storecoupledmodel.storemodel.StoreModelTestGeneratorState;
 
-public abstract class StoreModelTestGenerator extends PDEVSModel<LongSimTime, StoreModelTestGeneratorState> {
+public abstract class StoreModelTestGenerator extends PDEVSModel<LongSimTime, ModifiableStoreModelTestGeneratorState> {
 
     public static String modelIdentifier = "storeModelTestGenerator";
 
-    public static Port<Customer> toCustomerArrival = new Port<>("TO_CUSTOMER_ARRIVAL");
-    public static Port<Shipment> toReceiveShipment = new Port<>("TO_RECEIVE_SHIPMENT");
+    public static Port<Customer> toCustomerArrival = new Port<>("toCustomerArrival");
+    public static Port<Shipment> toReceiveShipment = new Port<>("toReceiveShipment");
 
 
-    public StoreModelTestGenerator(StoreModelTestGeneratorState initialState) {
+    public StoreModelTestGenerator(ModifiableStoreModelTestGeneratorState initialState) {
         super(initialState, modelIdentifier);
     }
 

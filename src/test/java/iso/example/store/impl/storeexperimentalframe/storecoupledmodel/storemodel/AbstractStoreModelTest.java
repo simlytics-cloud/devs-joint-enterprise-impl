@@ -12,16 +12,15 @@ import org.apache.pekko.actor.typed.ActorRef;
 import org.apache.pekko.actor.typed.Behavior;
 import org.apache.pekko.actor.typed.javadsl.Behaviors;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.pekko.actor.testkit.typed.javadsl.ActorTestKit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.apache.pekko.actor.testkit.typed.javadsl.TestProbe;
 
 public abstract class AbstractStoreModelTest {
-
     protected ActorTestKit testKit;
 
     protected LongSimTime startTime = LongSimTime.builder().t(0L).build();
@@ -31,13 +30,6 @@ public abstract class AbstractStoreModelTest {
 
     protected abstract StoreModelTestGenerator buildStoreModelTestGenerator();
 
-    @BeforeAll
-    public static void initialize() { testKit = ActorTestKit.create();}
-
-    @AfterAll
-    public static void cleanup() {
-        testKit.shutdownTestKit();
-    }
 
     public Behavior<DevsMessage> createStoreModelTestFrame() {
         Map<String, ActorRef<DevsMessage>> modelSimulators = new HashMap<>();
@@ -61,11 +53,16 @@ public abstract class AbstractStoreModelTest {
         });
     }
 
-    protected void run(LongSimTime endTime) {
+    protected void runStoreModelTest(LongSimTime endTime) throws InterruptedException {
+        ActorTestKit testKit = ActorTestKit.create();
         ActorRef<DevsMessage> storeModelTestFrame = testKit.spawn(createStoreModelTestFrame(), "storeModelTestFrame");
         ActorRef<DevsMessage> rootCoordinator = testKit.spawn(RootCoordinator.create(
                 endTime, storeModelTestFrame), "root");
         rootCoordinator.tell(InitSim.builder().time(startTime).build());
+        TestProbe<DevsMessage> testProbe = testKit.createTestProbe();
+        testProbe.expectTerminated(rootCoordinator, Duration.ofSeconds(10));
+        Thread.sleep(10 * 1000);
+        //testKit.shutdownTestKit();
     }
 
 }

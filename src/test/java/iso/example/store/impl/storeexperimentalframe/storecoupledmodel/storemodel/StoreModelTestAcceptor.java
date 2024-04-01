@@ -9,12 +9,12 @@ import iso.example.store.immutables.Order;
 public abstract class StoreModelTestAcceptor extends PDEVSModel<LongSimTime, StoreModelTestAcceptor.StoreModelTestAcceptorState> {
 
     public static String modelIdentifier = "storeModelTestAcceptor";
-    public static abstract class StoreModelTestAcceptorState {
+    public static class StoreModelTestAcceptorState {
 
     }
 
-    public static Port<Customer> fromCustomerDeparture = new Port<>("FROM_CUSTOMER_DEPARTURE");
-    public static Port<Order> fromSendOrder = new Port<>("FROM_CUSTOMER_DEPARTURE");
+    public static Port<Customer> fromCustomerDeparture = new Port<>("fromCustomerDeparture");
+    public static Port<Order> fromSendOrder = new Port<>("fromSendOrder");
 
 
     public StoreModelTestAcceptor(StoreModelTestAcceptorState modelState) {

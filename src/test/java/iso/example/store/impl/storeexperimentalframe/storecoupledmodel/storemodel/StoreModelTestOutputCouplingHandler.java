@@ -27,24 +27,21 @@ public class StoreModelTestOutputCouplingHandler extends OutputCouplingHandler {
             PortValue<Customer> flowPortValue = StoreModel.customerArrival.createPortValue(
                     StoreModelTestGenerator.toCustomerArrival.getValue(portValue));
             addInputPortValue(flowPortValue, determineTargetModel(portValue), receiverMap);
-        }
-
-        if (portValue.getPortIdentifier().equals(StoreModelTestGenerator.toReceiveShipment.getPortIdentifier())) {
+        } else if (portValue.getPortIdentifier().equals(StoreModelTestGenerator.toReceiveShipment.getPortIdentifier())) {
             PortValue<Shipment> flowPortValue = StoreModel.receiveShipment.createPortValue(
                     StoreModelTestGenerator.toReceiveShipment.getValue(portValue));
             addInputPortValue(flowPortValue, determineTargetModel(portValue), receiverMap);
-        }
-
-        if (portValue.getPortIdentifier().equals(StoreModel.customerDeparture.getPortIdentifier())) {
+        } else if (portValue.getPortIdentifier().equals(StoreModel.customerDeparture.getPortIdentifier())) {
             PortValue<Customer> flowPortValue = StoreModelTestAcceptor.fromCustomerDeparture.createPortValue(
                     StoreModel.customerDeparture.getValue(portValue));
             addInputPortValue(flowPortValue, determineTargetModel(portValue), receiverMap);
-        }
-
-        if (portValue.getPortIdentifier().equals(StoreModel.sendOrder.getPortIdentifier())) {
+        } else if (portValue.getPortIdentifier().equals(StoreModel.sendOrder.getPortIdentifier())) {
             PortValue<Order> flowPortValue = StoreModelTestAcceptor.fromSendOrder.createPortValue(
                     StoreModel.sendOrder.getValue(portValue));
             addInputPortValue(flowPortValue, determineTargetModel(portValue), receiverMap);
+        } else {
+            throw new IllegalArgumentException("Output couplings did not recognize port identifier " +
+                    portValue.getPortIdentifier());
         }
 
     }
@@ -53,8 +50,8 @@ public class StoreModelTestOutputCouplingHandler extends OutputCouplingHandler {
         return switch (fromPortValue.getPortIdentifier()) {
             case "toCustomerArrival" -> StoreModel.modelIdentifier;
             case "toReceiveShipment" -> StoreModel.modelIdentifier;
-            case "customerDeparture" -> StoreModelTestGenerator.modelIdentifier;
-            case "sendOrder" -> StoreModelTestGenerator.modelIdentifier;
+            case "customerDeparture" -> StoreModelTestAcceptor.modelIdentifier;
+            case "sendOrder" -> StoreModelTestAcceptor.modelIdentifier;
             default -> throw new IllegalArgumentException(
                     "Could not identify target model from PortValue with identifier " +
                             fromPortValue.getPortIdentifier());
