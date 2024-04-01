@@ -1,0 +1,1 @@
+package iso.example.store.impl.storeexperimentalframe.storecoupledmodel;
